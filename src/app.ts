@@ -1,19 +1,20 @@
-import express from "express"
 import cors from "cors"
+import express from "express"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
+import morgan from "morgan"
+import CityRoutes from "./routes/city.routes"
 
 dotenv.config()
 const {PORT, DEV_DB_URL, PROD_DB_URL, ENV} = process.env
 
 const app: express.Application = express()
 
-app.use(express.json())
 app.use(cors({credentials: true}))
+app.use(express.json())
+app.use(morgan('common'))
 
-app.get("/", (_, res: express.Response) => {
-    res.send("HELLO!")
-})
+CityRoutes.routes(app)
 
 app.listen(PORT, () => console.log("Server is running!"))
 
