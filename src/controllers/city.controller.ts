@@ -12,24 +12,33 @@ const getCities = async (_: express.Request, res: express.Response) => {
     }
 }
 
-const addCity = async (req: express.Request, res: express.Response) => {
-    const city = new CityModel({
-        name: req.body.name,
-        state: req.body.state,
-        country: req.body.country,
-        latitude: req.body.latitude,
-        longitude: req.body.longitude
-    })
 
+const getCityByName = async (req: express.Request, res: express.Response) => {
     try {
+        const city = await CityModel.findOne({name: req.params.name})
+        res.status(HttpStatus.OK).send(city)
+    } catch (error) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: error.message })
+    }
+}
+
+
+const addCity = async (req: express.Request, res: express.Response) => {
+    console.log(req.body)
+    const city = new CityModel(req.body)
+    try {
+        console.log("Trying to save")
         const newCity = await city.save()
         res.status(HttpStatus.CREATED).send(newCity)
     } catch (error) {
+        console.log("FAILED to save")
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: error.message})
     }
 }
 
+
 export default {
     getCities,
+    getCityByName,
     addCity
 }
