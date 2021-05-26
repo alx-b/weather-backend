@@ -28,3 +28,6 @@ const connectToDatabase = async () => {
         })
 }
 connectToDatabase()
+
+
+export default app
