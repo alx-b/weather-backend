@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import mongoose from "mongoose"
 import morgan from "morgan"
 import CityRoutes from "./routes/city.routes"
+import APIKeyRoutes from "./routes/apikey.routes"
 
 dotenv.config()
 const {PORT, DEV_DB_URL, PROD_DB_URL, ENV} = process.env
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use(morgan('common'))
 
 CityRoutes.routes(app)
+APIKeyRoutes.routes(app)
 
 app.listen(PORT, () => console.log("Server is running!"))
 
