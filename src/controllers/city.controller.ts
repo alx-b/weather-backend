@@ -23,19 +23,26 @@ const getCityByName = async (req: express.Request, res: express.Response) => {
 }
 
 
-const addCity = async (req: express.Request, res: express.Response) => {
-    console.log(req.body)
-    const city = new CityModel(req.body)
-    try {
-        console.log("Trying to save")
-        const newCity = await city.save()
-        res.status(HttpStatus.CREATED).send(newCity)
-    } catch (error) {
-        console.log("FAILED to save")
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: error.message})
+const isAlreadyInDatabase = async (newCity: any) => {
+    const city = await CityModel.findOne({name: newCity.name})
+    if (!city) {
+        return false
     }
+    return true
 }
 
+const addCity = async(req: express.Request, res: express.Response) => {
+    const city = new CityModel(req.body)
+    if (await isAlreadyInDatabase(city)){
+        return res.status(HttpStatus.CONFLICT).send({message: "Already in database!"})
+    }
+    try {
+        const databaseRes = await city.save()
+        res.status(HttpStatus.CREATED).send(databaseRes)
+    } catch (error) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: error.message })
+    }
+}
 
 export default {
     getCities,
